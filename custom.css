@@ -1,0 +1,22 @@
+
+:root{
+	--gridWidth : 500px;/*desktop default*/
+	--gridHeight: 500px;/*desktop default*/
+	--rows: 40;
+	--cols: 40;
+}
+#grid{
+	height: var(--gridHeight);
+	width: var(--gridWidth);
+	background-color:green;
+	border:10px solid grey;
+	
+}
+.grid-cell{
+	width: calc(var(--gridWidth)/var(--cols));
+	height: calc(var(--gridHeight)/var(--rows));
+	background-color: blue;
+	float: left;
+	box-sizing: border-box;
+	border:1px solid black;
+}
