@@ -2,8 +2,8 @@
 :root{
 	--gridWidth : 500px;/*desktop default*/
 	--gridHeight: 500px;/*desktop default*/
-	--rows: 40;
-	--cols: 40;
+	--rows: 20;
+	--cols: 20;
 }
 #grid{
 	height: var(--gridHeight);
@@ -19,4 +19,8 @@
 	float: left;
 	box-sizing: border-box;
 	border:1px solid black;
+	text-align: center;
+}
+#apple{
+	//center the image appropriately
 }
