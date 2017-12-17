@@ -1,34 +1,32 @@
 
 
+
 $(document).ready(function(){
+
+    $('body').append('<div id="scoreBoard"></div)');
+    $('#scoreBoard').append('<p>Score <span id="score">0</span></p>');
+    $('body').append('<div id="rules"><p>Use the keyboard arrow(&larr;&uarr;&rarr;&darr;) keys to move.</p></div>');
 	let rows = 20, cols = 20;
 	const grid = createGrid(rows,cols);
 	render(grid);
 	
+    $('#grid').append('<div id="gameOver">Game Over</div>');
+    $('#gameOver').hide();
+
+
 	$(document).on("keypress", turn);
 	
-	//turn, dir is right. move depends on dir
-	//move right. (x++,y)
-	//move left. (x--,y)
-	//move up. (x,y--)
-	//move down.(x,y++)
-	//listen when collision occurs
+	
 
-	//move means to change two tiles
-	//color, update coordinates after a set amt of time
-    //main(); //Start the cycle
-    
-    //var v = setInterval(move, 500);
-    var v  = setInterval(function(){move(v);}, 500);
+    var v  = setInterval(function(){move(v);}, 300);
     $('body').append('<button>stop</button>');
     $('button').click(function(){
         console.log("clicked button");
         clearInterval(v);
+        gameOver();
     });
     
 });
-
-
 
 //needs coordinates of snake , [0,0], dir. right
 let move = function m(v){//keep moving for each turn, use setTimeout
@@ -36,6 +34,7 @@ let move = function m(v){//keep moving for each turn, use setTimeout
     console.log("called");
     if(snake.outOfBounds()){
         clearInterval(v);
+        gameOver();
         console.log("interval has stopped");
         return;
     }
@@ -74,31 +73,37 @@ let move = function m(v){//keep moving for each turn, use setTimeout
     console.log("check collision");
     if(snake.collision()){
         clearInterval(v);
+        gameOver();
         return;
     }
     console.log("apple pos = "+food.pos);
     snake.path.push(snake.pos.slice());
     //check if apple was eaten
     if(snake.pos[0] == food.pos[0] && snake.pos[1] == food.pos[1]){
+        $('#apple').remove();
         //change food pos and rerender apple, snake update
         food.randomPos();
-        $('#r'+food.pos[0]+'c'+food.pos[1]).css({'background-color':'red'});
-        snake.applesEaten+=1;
+        //$('#r'+food.pos[0]+'c'+food.pos[1]).css({'background-color':'red'});
 
+         $('#'+'r'+food.pos[0]+'c'+food.pos[1]).append('<img id="apple" src="apple.png">');
+        snake.score+=food.points;
+        console.log('snake score ='+snake.score);
+        snake.increaseSpeed();
+        $('#score').text(snake.score);
+        food.increaseWorth();
     }else{
         let tail = snake.path[0];
-        $('#'+'r'+tail[0]+'c'+tail[1]).css({'background-color':'blue'});
+        $('#'+'r'+tail[0]+'c'+tail[1]).css({'background-color':'#52BF90'});
         snake.path.shift();
     }
     console.log('path =' + snake.path);
 };
-/*
-let update = function u(x){
-    
-};
-*/
 
-
+let gameOver = function end(){
+    $('#gameOver').show();
+    $('#rules').hide();
+    $('body').css({'background-color':'black'});
+}
 
 let turn = function t(e){
 
@@ -173,7 +178,8 @@ let render = function r(grid){
 	}
     // render snake and food object
 	$('#55').css({'background-color':'yellow'});
-    $('#r'+food.pos[0]+'c'+food.pos[1]).css({'background-color':'red'});
+    //$('#r'+food.pos[0]+'c'+food.pos[1]).css({'background-color':'red'});
+    $('#r'+food.pos[0]+'c'+food.pos[1]).append('<img id="apple" src="apple.png">');
 };
 
 
@@ -182,11 +188,11 @@ const snake = {
 	'pos': [5,5],// x -> row, y->col
 	'dir': 'right',
 	'path':[[5,5]],
-    'applesEaten' : 0,
+    'speed': 1000,
+    'score' : 0,
     collision : function(){//
         for(let i =0; i< this.path.length; i++){
             let curr = this.path[i];
-            console.log(this.pos[0]+'=='+curr[0]+'&&'+this.pos[1]+'=='+curr[1]);
             if(this.pos[0] == curr[0] && this.pos[1] == curr[1]){
                 console.log('collision indeed');
                 return true;
@@ -201,6 +207,11 @@ const snake = {
         }else{
             return false;
         }
+    },
+    increaseSpeed : function(){
+        if((this.speed - 100) >0){
+            this.speed -=100;
+        }
     }
 
 };
@@ -210,6 +221,10 @@ const food = {
     'pos' : [Math.floor(Math.random()*20), Math.floor(Math.random()*20)],
     randomPos: function(){
         this.pos = [Math.floor(Math.random()*20), Math.floor(Math.random()*20)];
+    },
+    'points': 1,
+    increaseWorth: function(){
+        this.points +=1;
     }
 
 };
