@@ -8,6 +8,7 @@
 body{
 	background-color: #C9DF8A;
 	min-width:1200px;
+
 }
 #grid{
 	height: var(--gridHeight);
@@ -15,12 +16,12 @@ body{
 	background-color:green;
 	border:10px solid grey;
 	margin-left: 30%;
-	
+
 }
 .grid-cell{
 	width: calc(var(--gridWidth)/var(--cols));
 	height: calc(var(--gridHeight)/var(--rows));
-	background-color: #52BF90;
+	background-color: #234D20;
 	float: left;
 	box-sizing: border-box;
 	border:1px solid #234D20;
@@ -45,7 +46,7 @@ body{
 	font-size: 30px;
 	font-family: 'Press Start 2P', cursive;
 	margin-left: 11%;
-
+	
 }
 #rules{
 	float: right;
@@ -55,4 +56,17 @@ body{
 	font-size: 20px;
 	font-family: 'Bungee Inline', cursive;
 	color: #234D20;
+}
+
+#restartButton{
+	height: 40px;
+	width: 90px;
+	background-color: green;
+	text-align: center;
+	padding-top: 20px;
+	font-family: 'Bungee Inline',cursive;
+	color: white;
+}
+#restartButton:hover{
+	background-color: blue;
 }

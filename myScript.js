@@ -2,7 +2,6 @@
 
 
 $(document).ready(function(){
-
     $('body').append('<div id="scoreBoard"></div)');
     $('#scoreBoard').append('<p>Score <span id="score">0</span></p>');
     $('body').append('<div id="rules"><p>Use the keyboard arrow(&larr;&uarr;&rarr;&darr;) keys to move.</p></div>');
@@ -11,27 +10,35 @@ $(document).ready(function(){
 	render(grid);
 	
     $('#grid').append('<div id="gameOver">Game Over</div>');
+
     $('#gameOver').hide();
 
-
-	$(document).on("keypress", turn);
+    
+    $('body').css("background-color")
 	
-	
-
-    var v  = setInterval(function(){move(v);}, 300);
-    $('body').append('<button>stop</button>');
-    $('button').click(function(){
-        console.log("clicked button");
-        clearInterval(v);
-        gameOver();
+    $(document).one("keydown", function(){
+        $('.grid-cell').css({'background-color': '#52BF90'});
+        timer();
     });
+	$(document).on("keydown", turn);
+
+
+    $('body').append('<div id="restartButton">restart</div>');
+    $('#restartButton').click(function(){
+        location.reload();
+    });
+
     
 });
 
-//needs coordinates of snake , [0,0], dir. right
-let move = function m(v){//keep moving for each turn, use setTimeout
-	//right//if key is pressed stop or return
-    console.log("called");
+
+var v;
+let timer = function(){
+    v  = setInterval(function(){move(v);}, 500);
+}
+
+let move = function m(v){
+	
     if(snake.outOfBounds()){
         clearInterval(v);
         gameOver();
@@ -40,54 +47,41 @@ let move = function m(v){//keep moving for each turn, use setTimeout
     }
 
     console.log('path =' + snake.path);
-    switch(snake.dir){//here we are composing the id
+    switch(snake.dir){
         case 'left':
-            // change
             $('#'+'r'+snake.pos[0]+'c'+(snake.pos[1]-1)).css({'background-color':'yellow'});
-            //update
             snake.pos[1]-=1;
             break;
         case 'up':
-            // change
             $('#'+'r'+(snake.pos[0]-1)+'c'+snake.pos[1]).css({'background-color':'yellow'});
-            //update
             snake.pos[0]-=1;
             break;
         case 'right':
             console.log("right hello");
-            // change
             $('#'+'r'+snake.pos[0]+'c'+(snake.pos[1]+1)).css({'background-color':'yellow'});
-            //update
             snake.pos[1]+=1;
             break;
         case 'down':
-            // change
             $('#'+'r'+(snake.pos[0]+1)+'c'+snake.pos[1]).css({'background-color':'yellow'});
-            //update
             snake.pos[0]+=1;
             break;
     }
 
-    console.log('*path =' + snake.path);
-    console.log("just moved, "+snake.pos);
-    console.log("check collision");
     if(snake.collision()){
         clearInterval(v);
         gameOver();
         return;
     }
-    console.log("apple pos = "+food.pos);
+    
     snake.path.push(snake.pos.slice());
     //check if apple was eaten
     if(snake.pos[0] == food.pos[0] && snake.pos[1] == food.pos[1]){
         $('#apple').remove();
         //change food pos and rerender apple, snake update
         food.randomPos();
-        //$('#r'+food.pos[0]+'c'+food.pos[1]).css({'background-color':'red'});
 
          $('#'+'r'+food.pos[0]+'c'+food.pos[1]).append('<img id="apple" src="apple.png">');
         snake.score+=food.points;
-        console.log('snake score ='+snake.score);
         snake.increaseSpeed();
         $('#score').text(snake.score);
         food.increaseWorth();
@@ -96,17 +90,16 @@ let move = function m(v){//keep moving for each turn, use setTimeout
         $('#'+'r'+tail[0]+'c'+tail[1]).css({'background-color':'#52BF90'});
         snake.path.shift();
     }
-    console.log('path =' + snake.path);
 };
 
 let gameOver = function end(){
     $('#gameOver').show();
     $('#rules').hide();
     $('body').css({'background-color':'black'});
+
 }
 
 let turn = function t(e){
-
 	switch(e.keyCode){
 		case 37: // left arrow
         if(snake.dir == 'right'){
@@ -178,7 +171,6 @@ let render = function r(grid){
 	}
     // render snake and food object
 	$('#55').css({'background-color':'yellow'});
-    //$('#r'+food.pos[0]+'c'+food.pos[1]).css({'background-color':'red'});
     $('#r'+food.pos[0]+'c'+food.pos[1]).append('<img id="apple" src="apple.png">');
 };
 
@@ -212,11 +204,17 @@ const snake = {
         if((this.speed - 100) >0){
             this.speed -=100;
         }
+    },
+
+    reset : function(){
+        this.pos = [5,5];
+        this.dir = 'right';
+        this.path = [[5,5]];
+        this.scor = 0;
     }
 
 };
 
-// food object, visualize on screen
 const food = {
     'pos' : [Math.floor(Math.random()*20), Math.floor(Math.random()*20)],
     randomPos: function(){
